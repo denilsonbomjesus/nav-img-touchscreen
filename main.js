@@ -4,9 +4,9 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let zoomLevel = 5; // Zoom inicial
-let offsetX = 200; // Posição inicial do mapa
-let offsetY = 5;
+let zoomLevel = 1; // Zoom inicial
+let offsetX = -1; // Posição inicial do mapa
+let offsetY = -1;
 let dragging = false;
 let dragStartX, dragStartY;
 
