@@ -14,8 +14,8 @@ const mapImage = new Image();
 mapImage.src = 'assets/magico.jpg'; // Usar o arquivo certo do Tiled
 
 mapImage.onload = function() {
-    // Calcular offsets iniciais para centralizar a imagem em desktop
-    if (window.innerWidth > 768) { // Assumindo que 768px é o limite entre mobile e desktop
+    // Renderiza a imagem no canto superior esquerdo para mobile
+    if (window.innerWidth > 768) { // Desktop
         offsetX = (canvas.width - mapImage.width * zoomLevel) / 2;
     }
     drawMap();
@@ -36,19 +36,36 @@ function limitMovement() {
     const imageWidth = mapImage.width * zoomLevel;
     const imageHeight = mapImage.height * zoomLevel;
 
-    // Limites apenas para o eixo Y (vertical)
-    if (offsetY > 0) offsetY = 0; // Limite superior
-    if (offsetY < canvas.height - imageHeight) offsetY = canvas.height - imageHeight; // Limite inferior
+    // Limites para a movimentação
+
+    // if (offsetX > 0) offsetX = 0; // Limite esquerdo
+    // if (offsetY > 0) offsetY = 0; // Limite superior
+    // if (offsetX < canvas.width - imageWidth) offsetX = canvas.width - imageWidth; // Limite direito
+    // if (offsetY < canvas.height - imageHeight) offsetY = canvas.height - imageHeight; // Limite inferior
+
+    if (window.innerWidth <= 768) { // Para mobile
+        if (offsetX > 0) offsetX = 0; // Limite esquerdo
+        if (offsetY > 0) offsetY = 0; // Limite superior
+        if (offsetX < canvas.width - imageWidth) offsetX = canvas.width - imageWidth; // Limite direito
+        if (offsetY < canvas.height - imageHeight) offsetY = canvas.height - imageHeight; // Limite inferior
+    } else { // Para desktop
+        if (offsetY > 0) offsetY = 0; // Limite superior
+        if (offsetY < canvas.height - imageHeight) offsetY = canvas.height - imageHeight; // Limite inferior
+        if (offsetX > 0) offsetX = 0; // Limite esquerdo
+        if (offsetX < canvas.width - imageWidth) offsetX = canvas.width - imageWidth; // Limite direito
+    }
 }
 
 // Eventos de touch para arrastar o mapa
 canvas.addEventListener('mousedown', (e) => {
     dragging = true;
-    dragStartY = e.clientY - offsetY; // Apenas Y para movimentação
+    dragStartX = e.clientX - offsetX;
+    dragStartY = e.clientY - offsetY;
 });
 
 canvas.addEventListener('mousemove', (e) => {
     if (dragging) {
+        offsetX = e.clientX - dragStartX;
         offsetY = e.clientY - dragStartY;
         limitMovement(); // Aplica os limites
         drawMap();
@@ -61,11 +78,13 @@ canvas.addEventListener('mouseup', () => {
 
 canvas.addEventListener('touchstart', (e) => {
     dragging = true;
-    dragStartY = e.touches[0].clientY - offsetY; // Apenas Y para movimentação
+    dragStartX = e.touches[0].clientX - offsetX;
+    dragStartY = e.touches[0].clientY - offsetY;
 });
 
 canvas.addEventListener('touchmove', (e) => {
     if (dragging) {
+        offsetX = e.touches[0].clientX - dragStartX;
         offsetY = e.touches[0].clientY - dragStartY;
         limitMovement(); // Aplica os limites
         drawMap();
