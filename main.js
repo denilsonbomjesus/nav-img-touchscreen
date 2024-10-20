@@ -5,8 +5,8 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let zoomLevel = 1; // Zoom inicial
-let offsetX = -1; // Posição inicial do mapa
-let offsetY = -1;
+let offsetX = 0; // Posição inicial do mapa
+let offsetY = 0;
 let dragging = false;
 let dragStartX, dragStartY;
 
@@ -38,6 +38,7 @@ canvas.addEventListener('mousemove', (e) => {
     if (dragging) {
         offsetX = e.clientX - dragStartX;
         offsetY = e.clientY - dragStartY;
+        limitMapMovement(); // Limitar a movimentação
         drawMap();
     }
 });
@@ -56,6 +57,7 @@ canvas.addEventListener('touchmove', (e) => {
     if (dragging) {
         offsetX = e.touches[0].clientX - dragStartX;
         offsetY = e.touches[0].clientY - dragStartY;
+        limitMapMovement(); // Limitar a movimentação
         drawMap();
     }
 });
@@ -63,3 +65,17 @@ canvas.addEventListener('touchmove', (e) => {
 canvas.addEventListener('touchend', () => {
     dragging = false;
 });
+
+// Função para limitar a movimentação do mapa
+function limitMapMovement() {
+    const maxX = 0;
+    const maxY = 0;
+    const minX = canvas.width - mapImage.width * scale;
+    const minY = canvas.height - mapImage.height * scale;
+  
+    // Limitar o offsetX e offsetY aos limites do mapa
+    if (offsetX > maxX) offsetX = maxX;
+    if (offsetY > maxY) offsetY = maxY;
+    if (offsetX < minX) offsetX = minX;
+    if (offsetY < minY) offsetY = minY;
+  }
